@@ -1,0 +1,548 @@
+:root {
+  --bg: #f6f3ec;
+  --bg-accent: linear-gradient(180deg, #e8967a 0%, #f0b08a 30%, #f5cba7 55%, #f6ead8 80%, #f6f3ec 100%);
+  --surface: rgba(255, 255, 255, 0.82);
+  --surface-strong: rgba(255, 255, 255, 0.92);
+  --border: rgba(26, 54, 54, 0.12);
+  --text: #173433;
+  --muted: #5d6f6c;
+  --primary: #106b61;
+  --primary-dark: #0b5049;
+  --accent: #e8967a;
+  --accent-dark: #d4755e;
+  --secondary: #f0a500;
+  --danger: #b64735;
+  --shadow: 0 18px 50px rgba(30, 40, 52, 0.08);
+  --radius-lg: 28px;
+  --radius-md: 18px;
+  --radius-sm: 12px;
+}
+
+body {
+  background: var(--bg-accent);
+  background-attachment: fixed;
+  color: var(--text);
+}
+
+a {
+  color: inherit;
+}
+
+.shell {
+  min-height: 100vh;
+  display: grid;
+  grid-template-rows: auto 1fr auto;
+}
+
+.shell__header,
+.shell__footer,
+.shell__content {
+  width: min(1120px, calc(100vw - 2rem));
+  margin: 0 auto;
+}
+
+.shell__header {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+  align-items: center;
+  padding: 1.25rem 0;
+}
+
+.shell__content {
+  padding: 1rem 0 3rem;
+}
+
+.shell__footer {
+  padding: 1.25rem 0 2rem;
+  color: var(--muted);
+  font-size: 0.95rem;
+}
+
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 0.9rem;
+}
+
+.brand__title {
+  font-size: 1.25rem;
+  font-weight: 700;
+  text-decoration: none;
+}
+
+.nav {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+}
+
+.nav__link {
+  text-decoration: none;
+  padding: 0.75rem 1rem;
+  border-radius: 999px;
+  color: var(--muted);
+  transition: 180ms ease;
+}
+
+.nav__link.active,
+.nav__link:hover {
+  color: var(--text);
+  background: rgba(255, 255, 255, 0.75);
+}
+
+.page-grid {
+  display: grid;
+  gap: 1.25rem;
+}
+
+.page-eyebrow {
+  margin: 0 0 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.18em;
+  font-size: 0.76rem;
+  color: var(--primary);
+  font-weight: 700;
+}
+
+.panel,
+.form-card,
+.empty-state,
+.auth-page {
+  border: 1px solid var(--border);
+  background: var(--surface);
+  backdrop-filter: blur(12px);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow);
+}
+
+.panel {
+  padding: 1.6rem;
+}
+
+.panel--hero {
+  background: linear-gradient(
+    145deg,
+    rgba(255, 255, 255, 0.92),
+    rgba(246, 243, 236, 0.78)
+  ),
+  linear-gradient(135deg, rgba(16, 107, 97, 0.15), rgba(240, 165, 0, 0.12));
+}
+
+.panel--success {
+  background: linear-gradient(
+    180deg,
+    rgba(245, 255, 250, 0.95) 0%,
+    rgba(255, 255, 255, 0.88) 100%
+  );
+}
+
+.panel--download {
+  max-width: 36rem;
+  margin: 2rem auto;
+  padding: 2rem;
+  background: linear-gradient(
+    145deg,
+    rgba(255, 255, 255, 0.96),
+    rgba(240, 248, 246, 0.9)
+  ),
+  radial-gradient(circle at top right, rgba(16, 107, 97, 0.18), transparent 32%);
+}
+
+.panel__meta h1,
+.panel__meta h2,
+.panel--hero h1,
+.auth-page h1 {
+  margin: 0 0 0.65rem;
+}
+
+.panel__meta p:last-child,
+.panel--hero p:last-child,
+.auth-page p:last-child {
+  margin-bottom: 0;
+}
+
+.panel__actions {
+  display: flex;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+  margin-top: 1rem;
+}
+
+.auth-page {
+  max-width: 34rem;
+  margin: 2rem auto;
+  padding: 2rem;
+  display: grid;
+  gap: 1.25rem;
+}
+
+.auth-page__intro p {
+  color: var(--muted);
+}
+
+.auth-page__aside {
+  margin: 0;
+  color: var(--muted);
+}
+
+.form-card {
+  padding: 1.5rem;
+  display: grid;
+  gap: 1rem;
+}
+
+.form-card--wide {
+  gap: 1.25rem;
+}
+
+.field {
+  display: grid;
+  gap: 0.4rem;
+}
+
+.field__label {
+  font-weight: 600;
+}
+
+.field__hint,
+.field__error {
+  font-size: 0.9rem;
+}
+
+.field__hint {
+  color: var(--muted);
+}
+
+.field__error {
+  color: var(--danger);
+}
+
+.input {
+  width: 100%;
+  padding: 0.9rem 1rem;
+  border-radius: var(--radius-sm);
+  border: 1px solid rgba(23, 52, 51, 0.16);
+  background: var(--surface-strong);
+  color: var(--text);
+  outline: none;
+  transition: border-color 160ms ease, box-shadow 160ms ease;
+}
+
+.input:focus {
+  border-color: rgba(16, 107, 97, 0.55);
+  box-shadow: 0 0 0 4px rgba(16, 107, 97, 0.12);
+}
+
+.input--error {
+  border-color: rgba(182, 71, 53, 0.45);
+}
+
+.button {
+  border: none;
+  border-radius: 999px;
+  padding: 0.92rem 1.2rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: transform 160ms ease, box-shadow 160ms ease, opacity 160ms ease;
+}
+
+.button:hover:not(:disabled) {
+  transform: translateY(-1px);
+}
+
+.button:disabled {
+  opacity: 0.65;
+  cursor: not-allowed;
+}
+
+.button--block {
+  width: 100%;
+}
+
+.button--primary {
+  color: white;
+  background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+  box-shadow: 0 10px 20px rgba(16, 107, 97, 0.2);
+}
+
+.button--secondary {
+  color: var(--text);
+  background: linear-gradient(135deg, #ffd166, #f0a500);
+}
+
+.button--ghost {
+  color: var(--text);
+  background: rgba(255, 255, 255, 0.72);
+  border: 1px solid var(--border);
+}
+
+.button--danger {
+  color: white;
+  background: linear-gradient(135deg, #d96350, var(--danger));
+}
+
+/* === v2 — Navbar buttons DARK (Figma Components Header) === */
+.shell__header .button--primary {
+  background: linear-gradient(135deg, #1a3636, #132b2a);
+  box-shadow: 0 10px 20px rgba(23, 52, 51, 0.3);
+}
+
+/* === v2 — Boutons formulaire saumon (Figma) === */
+.form-card .button--primary,
+.auth-page .button--primary,
+.download-form .button--primary,
+.download-form .button {
+  background: linear-gradient(135deg, var(--accent), var(--accent-dark));
+  box-shadow: 0 10px 20px rgba(232, 150, 122, 0.25);
+  color: white;
+}
+
+/* === v2 — Bouton Accéder FileCard saumon === */
+.file-card__actions .button--secondary {
+  background: linear-gradient(135deg, var(--accent), var(--accent-dark));
+  color: white;
+  box-shadow: 0 10px 20px rgba(232, 150, 122, 0.2);
+}
+
+.alert {
+  padding: 1rem 1.1rem;
+  border-radius: var(--radius-md);
+  border: 1px solid transparent;
+}
+
+.alert p {
+  margin: 0;
+}
+
+.alert--info {
+  color: #173433;
+  background: rgba(16, 107, 97, 0.08);
+  border-color: rgba(16, 107, 97, 0.15);
+}
+
+.alert--success {
+  color: #0b5049;
+  background: rgba(81, 183, 146, 0.12);
+  border-color: rgba(81, 183, 146, 0.24);
+}
+
+.alert--error {
+  color: #7f2a1d;
+  background: rgba(182, 71, 53, 0.09);
+  border-color: rgba(182, 71, 53, 0.18);
+}
+
+.loader {
+  min-height: 14rem;
+  display: grid;
+  place-content: center;
+  gap: 0.9rem;
+  color: var(--muted);
+  text-align: center;
+}
+
+.loader__spinner {
+  width: 2.4rem;
+  height: 2.4rem;
+  border-radius: 999px;
+  border: 4px solid rgba(16, 107, 97, 0.12);
+  border-top-color: var(--primary);
+  animation: spin 1s linear infinite;
+  justify-self: center;
+}
+
+.dropzone {
+  padding: 1.5rem;
+  border-radius: var(--radius-md);
+  border: 1px dashed rgba(16, 107, 97, 0.35);
+  background: linear-gradient(
+    180deg,
+    rgba(255, 255, 255, 0.76) 0%,
+    rgba(240, 248, 246, 0.9) 100%
+  );
+}
+
+.dropzone__caption {
+  display: block;
+  margin-bottom: 0.75rem;
+  font-weight: 600;
+}
+
+.dropzone__meta {
+  margin: 0.75rem 0 0;
+  color: var(--muted);
+}
+
+.upload-options {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 1rem;
+}
+
+.file-list {
+  display: grid;
+  gap: 1rem;
+}
+
+.file-card {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+  align-items: center;
+  border: 1px solid var(--border);
+  background: rgba(255, 255, 255, 0.85);
+  border-radius: var(--radius-md);
+  padding: 1.1rem 1.2rem;
+}
+
+.file-card__content h3 {
+  margin: 0 0 0.35rem;
+}
+
+.file-card__content p {
+  margin: 0.15rem 0;
+  color: var(--muted);
+}
+
+.file-card__actions {
+  display: flex;
+  gap: 0.65rem;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+}
+
+.file-card__lock {
+  font-size: 0.85em;
+  margin-left: 0.3rem;
+}
+
+.file-card__lock-badge {
+  font-size: 0.85rem;
+  align-self: center;
+}
+
+.file-card--expired {
+  opacity: 0.55;
+}
+
+.file-card--expired h3 {
+  text-decoration: line-through;
+}
+
+.empty-state {
+  padding: 2rem;
+  text-align: center;
+}
+
+/* === v2 — Switch saumon (Figma) === */
+.switch {
+  display: inline-flex;
+  border-radius: 999px;
+  overflow: hidden;
+  border: 1px solid var(--border);
+  background: var(--surface);
+}
+
+.switch__option {
+  padding: 0.6rem 1.2rem;
+  border: none;
+  background: transparent;
+  color: var(--muted);
+  font-weight: 600;
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: background 180ms ease, color 180ms ease;
+}
+
+.switch__option:hover {
+  color: var(--text);
+}
+
+.switch__option--active {
+  background: var(--accent);
+  color: white;
+  border-radius: 999px;
+}
+
+.home-landing {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 50vh;
+  text-align: center;
+  gap: 2rem;
+}
+
+.home-landing h1 {
+  font-size: 1.6rem;
+  color: var(--text);
+}
+
+.home-landing__icon {
+  width: 5rem;
+  height: 5rem;
+  border-radius: 50%;
+  border: none;
+  background: linear-gradient(135deg, var(--text), #2a4a49);
+  color: white;
+  display: grid;
+  place-items: center;
+  cursor: pointer;
+  box-shadow: var(--shadow);
+  transition: transform 180ms ease, box-shadow 180ms ease;
+}
+
+.home-landing__icon:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 24px 60px rgba(30, 40, 52, 0.15);
+}
+
+/* === v2 — Download page (Figma Desktop-9 à 12) === */
+.download-form {
+  display: grid;
+  gap: 1rem;
+  margin-top: 1.25rem;
+}
+
+.download-success {
+  display: grid;
+  gap: 1rem;
+  margin-top: 1.25rem;
+}
+
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@media (max-width: 720px) {
+  .shell__header {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .file-card {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .file-card__actions {
+    width: 100%;
+    justify-content: stretch;
+  }
+
+  .file-card__actions .button {
+    width: 100%;
+  }
+
+  .panel--download {
+    margin: 1rem auto;
+  }
+}
