@@ -1,0 +1,2 @@
+Ceci est un fichier de test pour Cypress.
+DataShare - test automatise E2E.
