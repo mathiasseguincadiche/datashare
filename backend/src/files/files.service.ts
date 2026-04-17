@@ -15,6 +15,7 @@ import { v4 as uuidv4 } from 'uuid';
 import { File } from '../entities/file.entity';
 import {
   DEFAULT_EXPIRY_DAYS,
+  FORBIDDEN_DETECTED_MIMES,
   MAX_EXPIRY_DAYS,
 } from '../common/constants/file.constants';
 import { UploadOptionsDto } from './dto/upload.dto';
@@ -27,6 +28,17 @@ export class FilesService {
     private readonly configService: ConfigService,
   ) {}
 
+  /**
+   * Detecte le vrai type d'un fichier en lisant ses premiers octets (signature / magic bytes).
+   * Complete le filtrage par extension pour detecter les executables renommes.
+   */
+  private async detectRealMimeType(filePath: string): Promise<string | null> {
+    // Import dynamique car file-type v19+ est en ESM pur.
+    const { fileTypeFromFile } = await import('file-type');
+    const detected = await fileTypeFromFile(filePath);
+    return detected?.mime ?? null;
+  }
+
   async uploadFile(
     file: Express.Multer.File,
     userId: string,
@@ -38,8 +50,17 @@ export class FilesService {
 
     const uploadDir =
       this.configService.get<string>('UPLOAD_DIR') || './uploads';
+    const storedPath = path.join(uploadDir, file.filename);
 
     try {
+      // Verification MIME reel apres ecriture disque.
+      const detectedMime = await this.detectRealMimeType(storedPath);
+      if (detectedMime && FORBIDDEN_DETECTED_MIMES.includes(detectedMime)) {
+        throw new BadRequestException(
+          `Type de fichier interdit detecte (${detectedMime})`,
+        );
+      }
+
       const requestedDays = options.expiresInDays ?? DEFAULT_EXPIRY_DAYS;
       const expiresInDays = Math.min(
         Math.max(requestedDays, 1),
@@ -80,9 +101,9 @@ export class FilesService {
         size: file.size,
       };
     } catch (error) {
-      // Rollback : si l'insert DB echoue, on supprime le fichier orphelin sur disque.
+      // Rollback : si MIME interdit ou insert DB echoue, on supprime le fichier orphelin sur disque.
       try {
-        await fs.unlink(path.join(uploadDir, file.filename));
+        await fs.unlink(storedPath);
       } catch {
         // Le fichier a deja disparu ou n'a pas ete ecrit : on ignore.
       }

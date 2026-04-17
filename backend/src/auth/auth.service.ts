@@ -29,11 +29,11 @@ export class AuthService {
       throw new ConflictException('Email deja utilise');
     }
 
-    const hashedPassword = await bcrypt.hash(dto.password, 10);
+    const passwordHash = await bcrypt.hash(dto.password, 10);
 
     const createdUser = this.usersRepository.create({
       email,
-      password: hashedPassword,
+      passwordHash,
     });
 
     const savedUser = await this.usersRepository.save(createdUser);
@@ -50,7 +50,7 @@ export class AuthService {
       where: { email },
     });
 
-    if (!user || !(await bcrypt.compare(dto.password, user.password))) {
+    if (!user || !(await bcrypt.compare(dto.password, user.passwordHash))) {
       throw new UnauthorizedException('Identifiants invalides');
     }
 

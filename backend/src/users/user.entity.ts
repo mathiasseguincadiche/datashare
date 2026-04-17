@@ -15,8 +15,9 @@ export class User {
   @Column({ unique: true })
   email: string;
 
-  @Column()
-  password: string;
+  // Stocke un hash bcrypt, jamais un mot de passe en clair.
+  @Column({ name: 'password_hash' })
+  passwordHash: string;
 
   @CreateDateColumn({ name: 'created_at' })
   createdAt: Date;

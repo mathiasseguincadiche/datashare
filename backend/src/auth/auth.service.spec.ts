@@ -42,7 +42,7 @@ describe('AuthService', () => {
       (bcrypt.hash as jest.Mock).mockResolvedValue('hashed-password');
       mockUsersRepository.create.mockReturnValue({
         email: 'test@example.com',
-        password: 'hashed-password',
+        passwordHash: 'hashed-password',
       });
       mockUsersRepository.save.mockResolvedValue({
         id: 'uuid-1',
@@ -70,7 +70,7 @@ describe('AuthService', () => {
       mockUsersRepository.findOne.mockResolvedValue({
         id: 'uuid-1',
         email: 'test@example.com',
-        password: 'hashed-password',
+        passwordHash: 'hashed-password',
       });
       (bcrypt.compare as jest.Mock).mockResolvedValue(true);
 
@@ -93,7 +93,7 @@ describe('AuthService', () => {
       mockUsersRepository.findOne.mockResolvedValue({
         id: 'uuid-1',
         email: 'test@example.com',
-        password: 'hashed-password',
+        passwordHash: 'hashed-password',
       });
       (bcrypt.compare as jest.Mock).mockResolvedValue(false);
 
