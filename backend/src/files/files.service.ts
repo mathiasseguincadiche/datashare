@@ -36,44 +36,58 @@ export class FilesService {
       throw new BadRequestException('Aucun fichier recu');
     }
 
-    const requestedDays = options.expiresInDays ?? DEFAULT_EXPIRY_DAYS;
-    const expiresInDays = Math.min(
-      Math.max(requestedDays, 1),
-      MAX_EXPIRY_DAYS,
-    );
-    const expiresAt = new Date();
-    expiresAt.setDate(expiresAt.getDate() + expiresInDays);
+    const uploadDir =
+      this.configService.get<string>('UPLOAD_DIR') || './uploads';
 
-    let passwordHash: string | null = null;
-    if (options.password) {
-      passwordHash = await bcrypt.hash(options.password, 10);
+    try {
+      const requestedDays = options.expiresInDays ?? DEFAULT_EXPIRY_DAYS;
+      const expiresInDays = Math.min(
+        Math.max(requestedDays, 1),
+        MAX_EXPIRY_DAYS,
+      );
+      const expiresAt = new Date();
+      expiresAt.setDate(expiresAt.getDate() + expiresInDays);
+
+      let passwordHash: string | null = null;
+      if (options.password) {
+        passwordHash = await bcrypt.hash(options.password, 10);
+      }
+
+      const token = uuidv4();
+
+      const fileRecord = this.filesRepository.create({
+        originalName: file.originalname,
+        storedName: file.filename,
+        size: file.size,
+        mimeType: file.mimetype,
+        token,
+        passwordHash,
+        expiresAt,
+        userId,
+      });
+
+      await this.filesRepository.save(fileRecord);
+
+      const frontendUrl =
+        this.configService.get<string>('FRONTEND_URL') ||
+        'http://localhost:5173';
+
+      return {
+        downloadUrl: `${frontendUrl}/download/${token}`,
+        expiresAt,
+        token,
+        originalName: file.originalname,
+        size: file.size,
+      };
+    } catch (error) {
+      // Rollback : si l'insert DB echoue, on supprime le fichier orphelin sur disque.
+      try {
+        await fs.unlink(path.join(uploadDir, file.filename));
+      } catch {
+        // Le fichier a deja disparu ou n'a pas ete ecrit : on ignore.
+      }
+      throw error;
     }
-
-    const token = uuidv4();
-
-    const fileRecord = this.filesRepository.create({
-      originalName: file.originalname,
-      storedName: file.filename,
-      size: file.size,
-      mimeType: file.mimetype,
-      token,
-      passwordHash,
-      expiresAt,
-      userId,
-    });
-
-    await this.filesRepository.save(fileRecord);
-
-    const frontendUrl =
-      this.configService.get<string>('FRONTEND_URL') || 'http://localhost:5173';
-
-    return {
-      downloadUrl: `${frontendUrl}/download/${token}`,
-      expiresAt,
-      token,
-      originalName: file.originalname,
-      size: file.size,
-    };
   }
 
   async getFileInfo(token: string) {
@@ -118,7 +132,8 @@ export class FilesService {
       }
     }
 
-    const uploadDir = this.configService.get<string>('UPLOAD_DIR') || './uploads';
+    const uploadDir =
+      this.configService.get<string>('UPLOAD_DIR') || './uploads';
 
     return {
       filePath: path.join(uploadDir, file.storedName),
@@ -147,7 +162,8 @@ export class FilesService {
       throw new NotFoundException('Fichier non trouve');
     }
 
-    const uploadDir = this.configService.get<string>('UPLOAD_DIR') || './uploads';
+    const uploadDir =
+      this.configService.get<string>('UPLOAD_DIR') || './uploads';
 
     try {
       await fs.unlink(path.join(uploadDir, file.storedName));

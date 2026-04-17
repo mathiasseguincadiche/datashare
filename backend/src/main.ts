@@ -10,7 +10,6 @@ async function bootstrap() {
 
   app.enableCors({
     origin: process.env.FRONTEND_URL || 'http://localhost:5173',
-    credentials: true,
     exposedHeaders: ['Content-Disposition'],
   });
 
@@ -24,15 +23,18 @@ async function bootstrap() {
 
   app.useGlobalFilters(new HttpExceptionFilter());
 
-  const swaggerConfig = new DocumentBuilder()
-    .setTitle('DataShare API')
-    .setDescription('API de transfert securise de fichiers')
-    .setVersion('1.0.0')
-    .addBearerAuth()
-    .build();
+  // Swagger n'est monte qu'en dehors de la production.
+  if (process.env.NODE_ENV !== 'production') {
+    const swaggerConfig = new DocumentBuilder()
+      .setTitle('DataShare API')
+      .setDescription('API de transfert securise de fichiers')
+      .setVersion('1.0.0')
+      .addBearerAuth()
+      .build();
 
-  const document = SwaggerModule.createDocument(app, swaggerConfig);
-  SwaggerModule.setup('api/docs', app, document);
+    const document = SwaggerModule.createDocument(app, swaggerConfig);
+    SwaggerModule.setup('api/docs', app, document);
+  }
 
   const uploadDir = process.env.UPLOAD_DIR || './uploads';
   if (!fs.existsSync(uploadDir)) {
@@ -44,8 +46,11 @@ async function bootstrap() {
 
   // eslint-disable-next-line no-console
   console.log(`Backend disponible sur http://localhost:${port}`);
-  // eslint-disable-next-line no-console
-  console.log(`Swagger disponible sur http://localhost:${port}/api/docs`);
+
+  if (process.env.NODE_ENV !== 'production') {
+    // eslint-disable-next-line no-console
+    console.log(`Swagger disponible sur http://localhost:${port}/api/docs`);
+  }
 }
 
 void bootstrap();

@@ -6,12 +6,18 @@ import { ExtractJwt, Strategy } from 'passport-jwt';
 @Injectable()
 export class JwtStrategy extends PassportStrategy(Strategy) {
   constructor(configService: ConfigService) {
+    const secret = configService.get<string>('JWT_SECRET');
+
+    if (!secret) {
+      throw new Error(
+        'JWT_SECRET manquant dans le fichier .env. Le serveur refuse de demarrer pour des raisons de securite.',
+      );
+    }
+
     super({
       jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
       ignoreExpiration: false,
-      secretOrKey:
-        configService.get<string>('JWT_SECRET') ||
-        'datashare_local_secret_change_me_32_chars_min',
+      secretOrKey: secret,
     });
   }
 
