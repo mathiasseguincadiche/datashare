@@ -92,9 +92,10 @@ export class FilesController {
     const { filePath, originalName, mimeType } =
       await this.filesService.downloadFile(token, dto.password);
 
+    const encodedName = encodeURIComponent(originalName);
     res.set({
       'Content-Type': mimeType,
-      'Content-Disposition': `attachment; filename="${originalName}"`,
+      'Content-Disposition': `attachment; filename="${originalName}"; filename*=UTF-8''${encodedName}`,
     });
 
     return res.sendFile(path.resolve(filePath));
