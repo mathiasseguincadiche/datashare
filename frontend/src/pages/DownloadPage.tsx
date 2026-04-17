@@ -76,7 +76,7 @@ export default function DownloadPage() {
 
         {error ? <Alert tone="error" message={error} /> : null}
 
-        {!success && fileInfo?.hasPassword ? (
+        {!success && fileInfo?.isPasswordProtected ? (
           <form className="download-form" onSubmit={handleDownload}>
             <Input
               label="Mot de passe"
@@ -92,7 +92,7 @@ export default function DownloadPage() {
           </form>
         ) : null}
 
-        {!success && fileInfo && !fileInfo.hasPassword ? (
+        {!success && fileInfo && !fileInfo.isPasswordProtected ? (
           <div className="download-form">
             <Button block onClick={() => handleDownload()} disabled={downloading}>
               {downloading ? 'Téléchargement...' : 'Télécharger'}
