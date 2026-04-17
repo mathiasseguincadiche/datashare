@@ -24,9 +24,9 @@ Prototype complet de transfert securise de fichiers pour le projet OpenClassroom
 
 ## Architecture
 
-<img width="1914" height="1692" alt="image" src="https://github.com/user-attachments/assets/57dc5343-2e9a-466f-befc-ec54544f047d" />
+<img width="1408" height="768" alt="image" src="https://github.com/user-attachments/assets/bf602e1a-f83a-424d-95e8-89e99b8cdf96" />
 
-<img width="886" height="472" alt="image" src="https://github.com/user-attachments/assets/9ebb0a64-5d9b-4e09-bf9b-ac722f87b821" />
+<img width="2048" height="2496" alt="image" src="https://github.com/user-attachments/assets/5f65e4cf-e7b0-48e8-b2f6-e64a8ed99be4" />
 
 ## Installation
 
