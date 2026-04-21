@@ -2,55 +2,40 @@ import { ConfigService } from '@nestjs/config';
 import { JwtStrategy } from './jwt.strategy';
 
 describe('JwtStrategy', () => {
-  let strategy: JwtStrategy;
-  let mockConfigService: Partial<ConfigService>;
-
-  beforeEach(() => {
-    // On mocke ConfigService : le constructeur appelle
-    // configService.get('JWT_SECRET') et jette une erreur si absent.
-    // → on renvoie un secret factice pour permettre à super({...}) de s'initialiser.
-    mockConfigService = {
-      get: jest.fn().mockReturnValue('test-secret-factice-pour-les-tests'),
-    };
-
-    strategy = new JwtStrategy(mockConfigService as ConfigService);
-  });
+  // ─── Helper : ConfigService mocké, retourne la valeur passée ───
+  const makeConfigService = (secret: string | undefined): ConfigService =>
+    ({ get: jest.fn().mockReturnValue(secret) }) as unknown as ConfigService;
 
   describe('constructor', () => {
-    it('devrait lire JWT_SECRET depuis ConfigService', () => {
-      expect(mockConfigService.get).toHaveBeenCalledWith('JWT_SECRET');
+    it('lit JWT_SECRET via ConfigService et instancie la stratégie', () => {
+      const configService = makeConfigService('ma-cle-secrete-de-test');
+      const strategy = new JwtStrategy(configService);
+
+      expect(configService.get).toHaveBeenCalledWith('JWT_SECRET');
+      expect(strategy).toBeInstanceOf(JwtStrategy);
     });
 
-    it('devrait jeter une erreur si JWT_SECRET est absent', () => {
-      const configServiceVide = {
-        get: jest.fn().mockReturnValue(undefined),
-      };
+    it('lève une erreur si JWT_SECRET est absent (refus de démarrer)', () => {
+      const configService = makeConfigService(undefined);
 
-      expect(
-        () => new JwtStrategy(configServiceVide as unknown as ConfigService),
-      ).toThrow('JWT_SECRET manquant');
+      expect(() => new JwtStrategy(configService)).toThrow(
+        /JWT_SECRET manquant/,
+      );
     });
   });
 
   describe('validate', () => {
-    it('devrait extraire id et email depuis le payload JWT', async () => {
-      const payload = { sub: '42', email: 'test@datashare.fr' };
+    it('transforme le payload { sub, email } en { id, email }', async () => {
+      const configService = makeConfigService('secret');
+      const strategy = new JwtStrategy(configService);
 
+      const payload = { sub: 'user-uuid-123', email: 'test@datashare.fr' };
       const result = await strategy.validate(payload);
 
       expect(result).toEqual({
-        id: '42',
+        id: 'user-uuid-123',
         email: 'test@datashare.fr',
       });
-    });
-
-    it('devrait fonctionner avec un autre utilisateur', async () => {
-      const payload = { sub: 'abc-123', email: 'autre@datashare.fr' };
-
-      const result = await strategy.validate(payload);
-
-      expect(result.id).toBe('abc-123');
-      expect(result.email).toBe('autre@datashare.fr');
     });
   });
 });
