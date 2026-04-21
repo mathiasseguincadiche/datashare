@@ -11,6 +11,22 @@ import * as bcrypt from 'bcrypt';
 import { FilesService } from './files.service';
 import { File } from '../entities/file.entity';
 
+// ─────────────────────────────────────────────────────────────
+// Mock du module `file-type` (ESM pur, non résoluble par Jest CJS).
+// On simule la détection MIME côté test → isole FilesService
+// de la lib externe et évite de lire un vrai fichier sur le disque.
+// { virtual: true } : Jest n'essaie pas de résoudre le module physiquement.
+// ─────────────────────────────────────────────────────────────
+jest.mock(
+  'file-type',
+  () => ({
+    fileTypeFromFile: jest
+      .fn()
+      .mockResolvedValue({ mime: 'application/pdf', ext: 'pdf' }),
+  }),
+  { virtual: true },
+);
+
 jest.mock('bcrypt');
 jest.mock('uuid', () => ({ v4: () => 'mock-uuid-token' }));
 jest.mock('fs/promises', () => ({ unlink: jest.fn().mockResolvedValue(undefined) }));
