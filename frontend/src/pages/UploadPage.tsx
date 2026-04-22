@@ -76,6 +76,7 @@ export default function UploadPage() {
             {formatSize(result.size)} · Expire le {formatDate(result.expiresAt)}
           </p>
           <input
+            data-cy="download-link"
             className="input"
             readOnly
             value={result.downloadUrl}

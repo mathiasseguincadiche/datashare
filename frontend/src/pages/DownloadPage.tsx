@@ -58,7 +58,7 @@ export default function DownloadPage() {
   return (
     <section className="page-grid" data-cy="download-page">
       <div className="panel panel--download">
-        <div className="panel__meta">
+        <div className="panel__meta" data-cy="file-info">
           <h1>Télécharger un fichier</h1>
 
           {fileInfo ? (
@@ -86,7 +86,7 @@ export default function DownloadPage() {
               onChange={(event) => setPassword(event.target.value)}
               required
             />
-            <Button type="submit" block disabled={downloading}>
+            <Button data-cy="download-btn" type="submit" block disabled={downloading}>
               {downloading ? 'Téléchargement...' : 'Télécharger'}
             </Button>
           </form>
@@ -94,7 +94,7 @@ export default function DownloadPage() {
 
         {!success && fileInfo && !fileInfo.isPasswordProtected ? (
           <div className="download-form">
-            <Button block onClick={() => handleDownload()} disabled={downloading}>
+            <Button data-cy="download-btn" block onClick={() => handleDownload()} disabled={downloading}>
               {downloading ? 'Téléchargement...' : 'Télécharger'}
             </Button>
           </div>

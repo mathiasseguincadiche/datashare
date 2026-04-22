@@ -37,6 +37,7 @@ export default function RegisterForm({
   return (
     <form className="form-card" data-cy="register-form" onSubmit={handleSubmit}>
       <Input
+        data-cy="email"
         label="Email"
         type="email"
         placeholder="exemple@email.com"
@@ -45,6 +46,7 @@ export default function RegisterForm({
         required
       />
       <Input
+        data-cy="password"
         label="Mot de passe"
         type="password"
         placeholder="Minimum 6 caractères"

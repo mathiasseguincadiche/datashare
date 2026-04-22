@@ -21,6 +21,7 @@ export default function LoginForm({
   return (
     <form className="form-card" data-cy="login-form" onSubmit={onSubmit}>
       <Input
+        data-cy="email"
         label="Email"
         type="email"
         placeholder="exemple@email.com"
@@ -29,6 +30,7 @@ export default function LoginForm({
         required
       />
       <Input
+        data-cy="password"
         label="Mot de passe"
         type="password"
         value={password}
