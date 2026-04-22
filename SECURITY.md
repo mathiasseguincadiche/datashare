@@ -14,18 +14,28 @@
 ## Commandes de verification recommandees
 
 Backend :
-
-```bash
 cd backend
 npm audit
-```
 
 Frontend :
-
-```bash
 cd frontend
 npm audit
-```
+
+## Resultat de l'audit (2026-04-22)
+
+Backend : `found 0 vulnerabilities`.
+
+Frontend : 3 CVE moderees detectees.
+
+| Package | CVE | Decision |
+| --- | --- | --- |
+| `follow-redirects` <= 1.15.11 | GHSA-r4q5-vmmm-2653 | Corrigee via `npm audit fix` (non-breaking) |
+| `esbuild` <= 0.24.2 | GHSA-67mh-4wv8-2f99 | Acceptee (dev-server uniquement) |
+| `vite` <= 6.4.1 | depend de esbuild | Acceptee (meme chaine que esbuild) |
+
+Justification des CVE acceptees : la faille esbuild n'est exploitable que pendant `npm run dev` (serveur de developpement sur `localhost:5173`). En production, Vite produit des fichiers statiques via `npm run build`, esbuild n'est plus execute. Le correctif automatique (`npm audit fix --force`) installerait `vite@8.0.9`, version majeure breaking, incompatible avec le plugin React actuel.
+
+Mitigation pendant le dev : ne pas exposer le dev-server sur internet (bind `localhost` uniquement).
 
 ## Decision de securite
 
