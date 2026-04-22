@@ -24,7 +24,7 @@ describe('Telechargement via lien public', () => {
     cy.clearLocalStorage();
     cy.visit(`/download/${downloadToken}`);
     cy.get('[data-cy=download-btn]').click();
-    cy.get('[data-cy=download-btn]').should('not.be.disabled');
+    cy.contains('Fichier téléchargé avec succès').should('be.visible');
   });
 
   it('affiche une erreur pour un token invalide', () => {
