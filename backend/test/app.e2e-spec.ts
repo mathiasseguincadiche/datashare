@@ -1,19 +1,19 @@
-import { INestApplication, ValidationPipe } from '@nestjs/common';
-import { Test, TestingModule } from '@nestjs/testing';
-import * as request from 'supertest';
-import { AuthController } from '../src/auth/auth.controller';
-import { AuthService } from '../src/auth/auth.service';
+import { INestApplication, ValidationPipe } from "@nestjs/common";
+import { Test, TestingModule } from "@nestjs/testing";
+import * as request from "supertest";
+import { AuthController } from "../src/auth/auth.controller";
+import { AuthService } from "../src/auth/auth.service";
 
-describe('AuthController (e2e)', () => {
+describe("AuthController (e2e)", () => {
   let app: INestApplication;
 
   const authServiceMock = {
     register: jest.fn(({ email }: { email: string }) => ({
-      id: 'new-user-id',
+      id: "new-user-id",
       email,
     })),
     login: jest.fn(() => ({
-      access_token: 'fake-jwt-token',
+      access_token: "fake-jwt-token",
     })),
   };
 
@@ -44,12 +44,12 @@ describe('AuthController (e2e)', () => {
     await app.close();
   });
 
-  it('/auth/register (POST)', async () => {
+  it("/auth/register (POST)", async () => {
     await request(app.getHttpServer())
-      .post('/auth/register')
+      .post("/auth/register")
       .send({
-        email: 'new-user@datashare.fr',
-        password: 'MotDePasse123',
+        email: "new-user@datashare.fr",
+        password: "MotDePasse123",
       })
       .expect(201)
       .expect(
@@ -61,20 +61,20 @@ describe('AuthController (e2e)', () => {
             email: string;
           };
         }) => {
-        expect(body).toEqual({
-          id: 'new-user-id',
-          email: 'new-user@datashare.fr',
-        });
+          expect(body).toEqual({
+            id: "new-user-id",
+            email: "new-user@datashare.fr",
+          });
         },
       );
   });
 
-  it('/auth/login (POST)', async () => {
+  it("/auth/login (POST)", async () => {
     await request(app.getHttpServer())
-      .post('/auth/login')
+      .post("/auth/login")
       .send({
-        email: 'new-user@datashare.fr',
-        password: 'MotDePasse123',
+        email: "new-user@datashare.fr",
+        password: "MotDePasse123",
       })
       .expect(200)
       .expect(
@@ -85,9 +85,9 @@ describe('AuthController (e2e)', () => {
             access_token: string;
           };
         }) => {
-        expect(body).toEqual({
-          access_token: 'fake-jwt-token',
-        });
+          expect(body).toEqual({
+            access_token: "fake-jwt-token",
+          });
         },
       );
   });

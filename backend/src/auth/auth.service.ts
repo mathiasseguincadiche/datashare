@@ -2,14 +2,14 @@ import {
   ConflictException,
   Injectable,
   UnauthorizedException,
-} from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
-import { JwtService } from '@nestjs/jwt';
-import { Repository } from 'typeorm';
-import * as bcrypt from 'bcrypt';
-import { User } from '../users/user.entity';
-import { LoginDto } from './dto/login.dto';
-import { RegisterDto } from './dto/register.dto';
+} from "@nestjs/common";
+import { InjectRepository } from "@nestjs/typeorm";
+import { JwtService } from "@nestjs/jwt";
+import { Repository } from "typeorm";
+import * as bcrypt from "bcrypt";
+import { User } from "../users/user.entity";
+import { LoginDto } from "./dto/login.dto";
+import { RegisterDto } from "./dto/register.dto";
 
 @Injectable()
 export class AuthService {
@@ -26,7 +26,7 @@ export class AuthService {
     });
 
     if (existingUser) {
-      throw new ConflictException('Email deja utilise');
+      throw new ConflictException("Email deja utilise");
     }
 
     const passwordHash = await bcrypt.hash(dto.password, 10);
@@ -51,7 +51,7 @@ export class AuthService {
     });
 
     if (!user || !(await bcrypt.compare(dto.password, user.passwordHash))) {
-      throw new UnauthorizedException('Identifiants invalides');
+      throw new UnauthorizedException("Identifiants invalides");
     }
 
     const payload = {

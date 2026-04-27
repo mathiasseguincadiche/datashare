@@ -9,3 +9,4 @@ backend/uploads/*
 !backend/uploads/.gitkeep
 cypress/videos/
 cypress/screenshots/
+*.tsbuildinfo

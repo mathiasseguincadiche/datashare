@@ -14,6 +14,7 @@ interface FileCardProps {
 export default function FileCard({
   file,
   expired,
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   onCopy,
   onDelete,
 }: FileCardProps) {

@@ -4,22 +4,22 @@ import {
   Entity,
   OneToMany,
   PrimaryGeneratedColumn,
-} from 'typeorm';
-import { File } from '../entities/file.entity';
+} from "typeorm";
+import { File } from "../entities/file.entity";
 
-@Entity('users')
+@Entity("users")
 export class User {
-  @PrimaryGeneratedColumn('uuid')
+  @PrimaryGeneratedColumn("uuid")
   id: string;
 
   @Column({ unique: true })
   email: string;
 
   // Stocke un hash bcrypt, jamais un mot de passe en clair.
-  @Column({ name: 'password_hash' })
+  @Column({ name: "password_hash" })
   passwordHash: string;
 
-  @CreateDateColumn({ name: 'created_at' })
+  @CreateDateColumn({ name: "created_at" })
   createdAt: Date;
 
   @OneToMany(() => File, (file) => file.user)

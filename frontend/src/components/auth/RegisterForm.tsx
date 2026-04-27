@@ -19,26 +19,26 @@ export default function RegisterForm({
   onSubmit,
 }: RegisterFormProps) {
   return (
-    <form className="form-card" data-cy="register-form" onSubmit={onSubmit}>
+    <form onSubmit={onSubmit}>
       <Input
         label="Email"
         type="email"
-        placeholder="exemple@email.com"
-        data-cy="email"
         value={email}
         onChange={(event) => onEmailChange(event.target.value)}
         required
+        data-cy="email"
       />
       <Input
         label="Mot de passe"
         type="password"
-        placeholder="Minimum 6 caractères"
-        data-cy="password"
         value={password}
         onChange={(event) => onPasswordChange(event.target.value)}
         required
+        minLength={8}
+        hint="8 caractères minimum"
+        data-cy="password"
       />
-      <Button data-cy="submit" type="submit" block disabled={loading}>
+      <Button type="submit" disabled={loading} data-cy="submit">
         {loading ? 'Inscription...' : 'Créer mon compte'}
       </Button>
     </form>

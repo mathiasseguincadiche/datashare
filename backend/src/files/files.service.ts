@@ -4,21 +4,21 @@ import {
   Injectable,
   NotFoundException,
   UnauthorizedException,
-} from '@nestjs/common';
-import { ConfigService } from '@nestjs/config';
-import { InjectRepository } from '@nestjs/typeorm';
-import { MoreThan, Repository } from 'typeorm';
-import * as bcrypt from 'bcrypt';
-import * as fs from 'fs/promises';
-import * as path from 'path';
-import { v4 as uuidv4 } from 'uuid';
-import { File } from '../entities/file.entity';
+} from "@nestjs/common";
+import { ConfigService } from "@nestjs/config";
+import { InjectRepository } from "@nestjs/typeorm";
+import { MoreThan, Repository } from "typeorm";
+import * as bcrypt from "bcrypt";
+import * as fs from "fs/promises";
+import * as path from "path";
+import { v4 as uuidv4 } from "uuid";
+import { File } from "../entities/file.entity";
 import {
   DEFAULT_EXPIRY_DAYS,
   FORBIDDEN_DETECTED_MIMES,
   MAX_EXPIRY_DAYS,
-} from '../common/constants/file.constants';
-import { UploadOptionsDto } from './dto/upload.dto';
+} from "../common/constants/file.constants";
+import { UploadOptionsDto } from "./dto/upload.dto";
 
 @Injectable()
 export class FilesService {
@@ -34,7 +34,7 @@ export class FilesService {
    */
   private async detectRealMimeType(filePath: string): Promise<string | null> {
     // Import dynamique car file-type v19+ est en ESM pur.
-    const { fileTypeFromFile } = await import('file-type');
+    const { fileTypeFromFile } = await import("file-type");
     const detected = await fileTypeFromFile(filePath);
     return detected?.mime ?? null;
   }
@@ -45,11 +45,11 @@ export class FilesService {
     options: UploadOptionsDto,
   ) {
     if (!file) {
-      throw new BadRequestException('Aucun fichier recu');
+      throw new BadRequestException("Aucun fichier recu");
     }
 
     const uploadDir =
-      this.configService.get<string>('UPLOAD_DIR') || './uploads';
+      this.configService.get<string>("UPLOAD_DIR") || "./uploads";
     const storedPath = path.join(uploadDir, file.filename);
 
     try {
@@ -90,8 +90,8 @@ export class FilesService {
       await this.filesRepository.save(fileRecord);
 
       const frontendUrl =
-        this.configService.get<string>('FRONTEND_URL') ||
-        'http://localhost:5173';
+        this.configService.get<string>("FRONTEND_URL") ||
+        "http://localhost:5173";
 
       return {
         downloadUrl: `${frontendUrl}/download/${token}`,
@@ -115,11 +115,11 @@ export class FilesService {
     const file = await this.filesRepository.findOne({ where: { token } });
 
     if (!file) {
-      throw new NotFoundException('Lien invalide ou inexistant');
+      throw new NotFoundException("Lien invalide ou inexistant");
     }
 
     if (new Date() > file.expiresAt) {
-      throw new GoneException('Ce lien a expire');
+      throw new GoneException("Ce lien a expire");
     }
 
     return {
@@ -135,26 +135,26 @@ export class FilesService {
     const file = await this.filesRepository.findOne({ where: { token } });
 
     if (!file) {
-      throw new NotFoundException('Lien invalide ou inexistant');
+      throw new NotFoundException("Lien invalide ou inexistant");
     }
 
     if (new Date() > file.expiresAt) {
-      throw new GoneException('Ce lien a expire');
+      throw new GoneException("Ce lien a expire");
     }
 
     if (file.passwordHash) {
       if (!password) {
-        throw new UnauthorizedException('Mot de passe requis');
+        throw new UnauthorizedException("Mot de passe requis");
       }
 
       const isValidPassword = await bcrypt.compare(password, file.passwordHash);
       if (!isValidPassword) {
-        throw new UnauthorizedException('Mot de passe incorrect');
+        throw new UnauthorizedException("Mot de passe incorrect");
       }
     }
 
     const uploadDir =
-      this.configService.get<string>('UPLOAD_DIR') || './uploads';
+      this.configService.get<string>("UPLOAD_DIR") || "./uploads";
 
     return {
       filePath: path.join(uploadDir, file.storedName),
@@ -169,8 +169,8 @@ export class FilesService {
         userId,
         expiresAt: MoreThan(new Date()),
       },
-      order: { createdAt: 'DESC' },
-      select: ['id', 'originalName', 'size', 'createdAt', 'expiresAt', 'token'],
+      order: { createdAt: "DESC" },
+      select: ["id", "originalName", "size", "createdAt", "expiresAt", "token"],
     });
   }
 
@@ -180,11 +180,11 @@ export class FilesService {
     });
 
     if (!file) {
-      throw new NotFoundException('Fichier non trouve');
+      throw new NotFoundException("Fichier non trouve");
     }
 
     const uploadDir =
-      this.configService.get<string>('UPLOAD_DIR') || './uploads';
+      this.configService.get<string>("UPLOAD_DIR") || "./uploads";
 
     try {
       await fs.unlink(path.join(uploadDir, file.storedName));
@@ -195,7 +195,7 @@ export class FilesService {
     await this.filesRepository.remove(file);
 
     return {
-      message: 'Fichier supprime avec succes',
+      message: "Fichier supprime avec succes",
     };
   }
 }

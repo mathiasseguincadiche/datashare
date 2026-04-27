@@ -131,6 +131,14 @@ npm run test:e2e
 
 ## Limites du MVP
 
-- Pas dupload anonyme
+- Pas dupload anonyme (sans compte)
 - Pas de tags
 - Pas de stockage cloud
+- Pas de classement par dossiers ou tags
+- Pas de CI/CD conteneurisation Docker
+- Pas HTTPS + reverse proxy production
+
+## Tests E2E (Cypress)
+
+Par défaut, Cypress tape sur `http://localhost:5173`. Pour cibler un autre environnement :
+CYPRESS_BASE_URL=http://staging.datashare.local npm run test:e2e

@@ -48,7 +48,7 @@ export default function RegisterPage() {
       />
 
       <p className="auth-page__aside">
-        <Link to="/login">J'ai déjà un compte</Link>
+        <Link to="/login">J&apos;ai déjà un compte</Link>
       </p>
     </section>
   );

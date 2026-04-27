@@ -1,8 +1,8 @@
-import { Test, TestingModule } from '@nestjs/testing';
-import { AuthController } from './auth.controller';
-import { AuthService } from './auth.service';
+import { Test, TestingModule } from "@nestjs/testing";
+import { AuthController } from "./auth.controller";
+import { AuthService } from "./auth.service";
 
-describe('AuthController', () => {
+describe("AuthController", () => {
   let controller: AuthController;
   let authService: AuthService;
 
@@ -14,9 +14,7 @@ describe('AuthController', () => {
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       controllers: [AuthController],
-      providers: [
-        { provide: AuthService, useValue: mockAuthService },
-      ],
+      providers: [{ provide: AuthService, useValue: mockAuthService }],
     }).compile();
 
     controller = module.get<AuthController>(AuthController);
@@ -25,10 +23,10 @@ describe('AuthController', () => {
 
   afterEach(() => jest.clearAllMocks());
 
-  describe('register', () => {
-    it('should delegate to authService.register and return result', async () => {
-      const dto = { email: 'new@test.com', password: 'Str0ng!Pass' };
-      const expected = { id: 1, email: 'new@test.com' };
+  describe("register", () => {
+    it("should delegate to authService.register and return result", async () => {
+      const dto = { email: "new@test.com", password: "Str0ng!Pass" };
+      const expected = { id: 1, email: "new@test.com" };
       mockAuthService.register.mockResolvedValue(expected);
 
       const result = await controller.register(dto as any);
@@ -38,10 +36,10 @@ describe('AuthController', () => {
     });
   });
 
-  describe('login', () => {
-    it('should delegate to authService.login and return token', async () => {
-      const dto = { email: 'user@test.com', password: 'Str0ng!Pass' };
-      const expected = { access_token: 'jwt-token-123' };
+  describe("login", () => {
+    it("should delegate to authService.login and return token", async () => {
+      const dto = { email: "user@test.com", password: "Str0ng!Pass" };
+      const expected = { access_token: "jwt-token-123" };
       mockAuthService.login.mockResolvedValue(expected);
 
       const result = await controller.login(dto as any);
