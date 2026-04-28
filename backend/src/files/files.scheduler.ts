@@ -18,84 +18,68 @@ export class FilesScheduler {
   ) {}
 
   /**
-   * Purge quotidienne : supprime les fichiers dont la date d'expiration est passee.
+   * Purge quotidienne (un seul passage a minuit) :
+   *  1. Supprime les fichiers expires (BDD + disque).
+   *  2. Balaye les orphelins disque (fichiers presents dans uploads/
+   *     mais sans ligne en base) — couvre les rollbacks incomplets
+   *     et les suppressions d'utilisateurs en cascade.
    */
   @Cron(CronExpression.EVERY_DAY_AT_MIDNIGHT)
-  async purgeExpiredFiles() {
-    this.logger.log("Demarrage de la purge quotidienne des fichiers expires");
-
-    const expiredFiles = await this.filesRepository.find({
-      where: {
-        expiresAt: LessThan(new Date()),
-      },
-    });
+  async purgeExpiredAndOrphanFiles() {
+    this.logger.log("Demarrage de la purge quotidienne");
 
     const uploadDir =
       this.configService.get<string>("UPLOAD_DIR") || "./uploads";
-    let deletedCount = 0;
 
+    // 1) Fichiers expires (BDD + disque)
+    const expiredFiles = await this.filesRepository.find({
+      where: { expiresAt: LessThan(new Date()) },
+    });
+
+    let expiredCount = 0;
     for (const file of expiredFiles) {
       try {
         await fs.unlink(path.join(uploadDir, file.storedName));
       } catch {
-        this.logger.warn(`Fichier physique deja absent: ${file.storedName}`);
-      }
-
-      await this.filesRepository.remove(file);
-      deletedCount += 1;
-    }
-
-    this.logger.log(`Purge terminee: ${deletedCount} fichier(s) supprime(s)`);
-  }
-
-  /**
-   * Balayage horaire : supprime les fichiers sur disque qui n'ont plus de ligne en base.
-   * Couvre les cas de suppression d'utilisateur en cascade (DB nettoyee, disque oublie)
-   * et les rollbacks incomplets.
-   */
-  @Cron(CronExpression.EVERY_HOUR)
-  async purgeOrphanDiskFiles() {
-    const uploadDir =
-      this.configService.get<string>("UPLOAD_DIR") || "./uploads";
-
-    let diskFiles: string[];
-    try {
-      diskFiles = await fs.readdir(uploadDir);
-    } catch (error) {
-      this.logger.warn(
-        `Dossier uploads introuvable, balayage ignore: ${String(error)}`,
-      );
-      return;
-    }
-
-    if (diskFiles.length === 0) {
-      return;
-    }
-
-    // On recupere tous les noms stockes en base en une seule requete.
-    const filesInDb = await this.filesRepository.find({
-      select: ["storedName"],
-    });
-    const validNames = new Set(filesInDb.map((f) => f.storedName));
-
-    let orphanCount = 0;
-    for (const diskFile of diskFiles) {
-      if (validNames.has(diskFile)) continue;
-
-      try {
-        await fs.unlink(path.join(uploadDir, diskFile));
-        orphanCount += 1;
-      } catch (error) {
         this.logger.warn(
-          `Echec suppression orphelin ${diskFile}: ${String(error)}`,
+          `Fichier physique deja absent: ${file.storedName}`,
         );
       }
+      await this.filesRepository.remove(file);
+      expiredCount += 1;
     }
 
-    if (orphanCount > 0) {
-      this.logger.log(
-        `Balayage orphelins: ${orphanCount} fichier(s) disque supprime(s)`,
+    // 2) Orphelins disque (presents sur le FS mais plus en base)
+    let orphanCount = 0;
+    try {
+      const diskFiles = await fs.readdir(uploadDir);
+
+      if (diskFiles.length > 0) {
+        const filesInDb = await this.filesRepository.find({
+          select: ["storedName"],
+        });
+        const validNames = new Set(filesInDb.map((f) => f.storedName));
+
+        for (const diskFile of diskFiles) {
+          if (validNames.has(diskFile)) continue;
+          try {
+            await fs.unlink(path.join(uploadDir, diskFile));
+            orphanCount += 1;
+          } catch (error) {
+            this.logger.warn(
+              `Echec suppression orphelin ${diskFile}: ${String(error)}`,
+            );
+          }
+        }
+      }
+    } catch (error) {
+      this.logger.warn(
+        `Dossier uploads introuvable, balayage orphelins ignore: ${String(error)}`,
       );
     }
+
+    this.logger.log(
+      `Purge terminee — expires: ${expiredCount}, orphelins: ${orphanCount}`,
+    );
   }
 }
